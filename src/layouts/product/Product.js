@@ -30,8 +30,8 @@ import { makeStyles } from "@mui/styles";
 import MDAlert from "components/MDAlert";
 import Bill from "layouts/billing/components/Bill";
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name, calories, fat, carbs, protein, food) {
+  return { name, calories, fat, carbs, protein, food };
 }
 
 const columns = [
@@ -68,11 +68,11 @@ const rows = [
 
 export default function Product() {
   const [rows, setRows] = useState([
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
+    createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 0.0),
+    createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 0.0),
+    createData("Eclair", 262, 16.0, 24, 6.0, 0.0),
+    createData("Cupcake", 305, 3.7, 67, 4.3, 0.0),
+    createData("Gingerbread", 356, 16.0, 49, 3.9, 0.0),
   ]);
 
   const [controller] = useMaterialUIController();
@@ -144,30 +144,24 @@ export default function Product() {
         <Stack gap="5rem">
           <Card>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <TableContainer
-                component={Paper}
-                style={{ padding: 0, margin: "0 auto", width: "100%" }}
-              >
-                <Table
-                  sx={{ minWidth: 650, margin: "auto" }}
-                  size="small"
-                  aria-label="simple table"
-                >
-                  <TableHead>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead sx={{ display: "table-header-group" }}>
                     <TableRow>
-                      <TableCell align="center" colSpan={5}>
-                        M
-                      </TableCell>
-                      <TableCell align="center" colSpan={1}>
-                        AD
-                      </TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell>MRF</TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell align="right">AD</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell align="center">Plastic</TableCell>
-                      <TableCell align="center">Glass</TableCell>
-                      <TableCell align="center">Metals</TableCell>
-                      <TableCell align="center">Metals</TableCell>
-                      <TableCell align="center">Food</TableCell>
+                      <TableCell>Paper</TableCell>
+                      <TableCell align="right">Plastic</TableCell>
+                      <TableCell align="right">Glass</TableCell>
+                      <TableCell align="right">Metals</TableCell>
+                      <TableCell align="right">Metals</TableCell>
+                      <TableCell align="right">Food</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
