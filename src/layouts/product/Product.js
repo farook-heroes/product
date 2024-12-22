@@ -13,6 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import Modal from "@mui/material/Modal";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -28,43 +29,28 @@ import MDSnackbar from "components/MDSnackbar";
 import { useMaterialUIController } from "context";
 import { makeStyles } from "@mui/styles";
 import MDAlert from "components/MDAlert";
+import { purple, grey, white } from "@mui/material/colors";
 import Bill from "layouts/billing/components/Bill";
 
 function createData(name, calories, fat, carbs, protein, food) {
   return { name, calories, fat, carbs, protein, food };
 }
+import { createTheme, useTheme } from "@mui/material/styles";
 
-const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ""} ${row.lastName || ""}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
+const schema = z.object({
+  name: z
+    .string({
+      required_error: "Name is required",
+      invalid_type_error: "Name must be a string",
+    })
+    .nonempty("Name is required"),
+  calories: z.number({ invalid_type_error: "Calories must be number" }),
+  carbs: z.number({ invalid_type_error: "Carbs must be Number" }),
+  protein: z.number({ invalid_type_error: "Protien must be Number" }),
+  fat: z.number({ invalid_type_error: "Fat must be Number" }),
+  protein: z.number({ invalid_type_error: "Protien must be Number" }),
+  food: z.number({ invalid_type_error: "Food must be Number" }),
+});
 
 export default function Product() {
   const [rows, setRows] = useState([
@@ -77,6 +63,8 @@ export default function Product() {
 
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
+
+  const theme = useTheme();
 
   const [successSB, setSuccessSB] = useState(false);
   const [infoSB, setInfoSB] = useState(false);
@@ -92,15 +80,6 @@ export default function Product() {
   const openErrorSB = () => setErrorSB(true);
   const closeErrorSB = () => setErrorSB(false);
 
-  const schema = z.object({
-    name: z
-      .string({
-        required_error: "Name is required",
-        invalid_type_error: "Name must be a string",
-      })
-      .nonempty("Name is required"),
-  });
-
   const {
     control,
     setValue,
@@ -108,26 +87,156 @@ export default function Product() {
     reset,
     getValues,
     watch,
+    setError,
     register,
+    clearErrors,
     formState: { errors, isSubmitted },
   } = useForm({
     defaultValues: {
       name: "",
+      calories: null,
+      carbs: null,
+      fat: null,
+      protein: null,
+      food: null,
     },
     resolver: zodResolver(schema),
+    mode: "onChange",
   });
 
   const onSubmit = (values) => {
-    setRows((prev) => [...prev, createData(values.name, 159, 6.0, 24, 4.0)]);
+    setRows((prev) => [...prev, { ...values }]);
     setSuccessSB(true);
-    reset({ name: "" });
+    reset({
+      name: "",
+      calories: null,
+      carbs: null,
+      fat: null,
+      protein: null,
+      food: null,
+    });
   };
 
   const onDelete = (index) => {
     setRows((prev) => prev.filter((_, i) => index != i));
   };
 
+  /* @typdef string*/
   const [row, setRow] = useState();
+
+  const [index, setIndex] = useState();
+
+  React.useEffect(() => {
+    if (row) reset({ ...row });
+    else
+      reset({
+        name: "",
+        calories: null,
+        carbs: null,
+        fat: null,
+        protein: null,
+        food: null,
+      });
+  }, [row]);
+
+  const onSubmitEdit = (values) => {
+    setRows((prev) => {
+      prev[index] = values;
+      return prev;
+    });
+    setRow(null);
+  };
+
+  const formItem = () => {
+    return (
+      <>
+        <Grid container spacing={2} padding="2rem 2rem">
+          <Grid item xl={4} md={2} xs={2}>
+            <TextField
+              required
+              {...register("name")}
+              key="name"
+              type="text"
+              id="standard-multiline-static"
+              label="Name"
+              error={!!errors?.name}
+              helperText={errors?.name?.message}
+            />
+          </Grid>
+          <Grid item xl={4} md={2} xs={2}>
+            <TextField
+              required
+              {...register("calories", {
+                valueAsNumber: true,
+              })}
+              key="calories"
+              type="text"
+              id="standard-multiline-static"
+              label="Calories"
+              error={!!errors?.calories}
+              helperText={errors?.calories?.message}
+            />
+          </Grid>
+          <Grid item xl={4} md={2} xs={2}>
+            <TextField
+              required
+              {...register("carbs", {
+                valueAsNumber: true,
+              })}
+              key="carbs"
+              type="number"
+              id="standard-multiline-static"
+              label="Carbs"
+              error={!!errors?.carbs}
+              helperText={errors?.carbs?.message}
+            />
+          </Grid>
+          <Grid item xl={4} md={2} xs={2}>
+            <TextField
+              required
+              {...register("fat", {
+                valueAsNumber: true,
+              })}
+              key="fat"
+              type="number"
+              id="standard-multiline-static"
+              label="Fat"
+              error={!!errors?.fat}
+              helperText={errors?.fat?.message}
+            />
+          </Grid>
+          <Grid item xl={4} md={2} xs={2}>
+            <TextField
+              required
+              {...register("protein", {
+                valueAsNumber: true,
+              })}
+              key="protein"
+              type="number"
+              id="standard-multiline-static"
+              label="Protiein"
+              error={!!errors?.protein}
+              helperText={errors?.protein?.message}
+            />
+          </Grid>
+          <Grid item xl={4} md={2} xs={2}>
+            <TextField
+              required
+              {...register("food", {
+                valueAsNumber: true,
+              })}
+              key="food"
+              type="number"
+              id="standard-multiline-static"
+              label="Food"
+              error={!!errors?.food}
+              helperText={errors?.food?.message}
+            />
+          </Grid>
+        </Grid>
+      </>
+    );
+  };
 
   return (
     <>
@@ -139,76 +248,91 @@ export default function Product() {
         width="100%"
         height="100%"
         padding="10rem 10rem"
-        gap="30 rem"
+        margin="3rem 3rem"
+        gap="30rem"
       >
         <Stack gap="5rem">
           <Card>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead sx={{ display: "table-header-group" }}>
-                    <TableRow>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                      <TableCell>MRF</TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                      <TableCell align="right">AD</TableCell>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead sx={{ display: "table-header-group" }}>
+                  <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell>MRF</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell align="right">AD</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Paper</TableCell>
+                    <TableCell align="right">Plastic</TableCell>
+                    <TableCell align="right">Glass</TableCell>
+                    <TableCell align="right">Metals</TableCell>
+                    <TableCell align="right">Metals</TableCell>
+                    <TableCell align="right">Food</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.map((row, index) => (
+                    <TableRow key={row.index}>
+                      <TableCell component="th" scope="row">
+                        {row.name}
+                      </TableCell>
+                      <TableCell align="center">{row.calories}</TableCell>
+                      <TableCell align="center">{row.fat}</TableCell>
+                      <TableCell align="center">{row.carbs}</TableCell>
+                      <TableCell align="center">{row.protein}</TableCell>
+                      <TableCell align="center">{row.food}</TableCell>
+                      <TableCell align="center">
+                        <MDButton
+                          variant="text"
+                          color={darkMode ? "white" : "dark"}
+                          onClick={() => {
+                            setRow(row);
+                            setIndex(index);
+                          }}
+                        >
+                          <Icon>edit</Icon>&nbsp;edit
+                        </MDButton>
+                      </TableCell>
+                      <TableCell>
+                        <MDButton variant="text" color="error" onClick={() => onDelete(index)}>
+                          <Icon>delete</Icon>&nbsp;delete
+                        </MDButton>
+                      </TableCell>
                     </TableRow>
-                    <TableRow>
-                      <TableCell>Paper</TableCell>
-                      <TableCell align="right">Plastic</TableCell>
-                      <TableCell align="right">Glass</TableCell>
-                      <TableCell align="right">Metals</TableCell>
-                      <TableCell align="right">Metals</TableCell>
-                      <TableCell align="right">Food</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row) => (
-                      <TableRow key={row.name}>
-                        <TableCell component="th" scope="row">
-                          {row.name}
-                        </TableCell>
-                        <TableCell align="center">{row.calories}</TableCell>
-                        <TableCell align="center">{row.fat}</TableCell>
-                        <TableCell align="center">{row.carbs}</TableCell>
-                        <TableCell align="center">{row.protein}</TableCell>
-                        <TableCell align="center">{row.food}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Card>
           <Stack gap={1.5}>
             <Box
+              component="div"
               display="flex"
               flexDirection="column"
+              justifyContent="center"
               alignItems="center"
-              bgcolor="ButtonShadow"
-              gap={1}
+              bgcolor={theme.palette.background.paper}
+              p={3}
+              mb={2}
+              pt={2}
             >
-              <TextField
-                required
-                {...register("name", { required: "name is required" })}
-                key="name"
-                type="text"
-                id="outlined-required"
-                label="Required"
-                error={!!errors?.name}
-                helperText={errors?.name?.message}
-              />
-
-              <Button
+              {formItem()}
+              <MDButton
                 variant="contained"
+                color={darkMode ? "white" : "dark"}
                 onClick={() => {
                   handleSubmit(onSubmit)();
                 }}
               >
-                Add
-              </Button>
+                <Icon>add</Icon>&nbsp;Add
+              </MDButton>
             </Box>
           </Stack>
           <Card id="delete-account">
@@ -260,27 +384,50 @@ export default function Product() {
       {row && (
         <Modal
           open={true}
-          onClose={() => setRow(null)}
+          onClose={() => {
+            setRow(null);
+          }}
           aria-labelledby="parent-modal-title"
           aria-describedby="parent-modal-description"
         >
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-              <MDBox
-                component="li"
+            <Box component="div" display="flex" flexDirection="column" p={0} m={0}>
+              <Box
+                component="div"
                 display="flex"
-                justifyContent="space-between"
-                alignItems="flex-start"
-                bgColor={darkMode ? "transparent" : "grey-100"}
-                borderRadius="lg"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                bgcolor={theme.palette.background.paper}
                 p={3}
                 mt="20rem"
                 mb={2}
                 pt={2}
               >
-                <Typography>Hello</Typography>
-              </MDBox>
-            </MDBox>
+                {formItem()}
+                <Box display="flex" flexDirection="row" alignContent="space-around" gap="2rem">
+                  <MDButton
+                    variant="contained"
+                    color={darkMode ? "white" : "dark"}
+                    onClick={() => {
+                      handleSubmit(onSubmitEdit)();
+                    }}
+                  >
+                    <Icon>edit</Icon>&nbsp;edit
+                  </MDButton>
+                  <MDButton
+                    variant="contained"
+                    color={"error"}
+                    onClick={() => {
+                      setRow(null);
+                      reset();
+                    }}
+                  >
+                    <Icon>cancel</Icon>&nbsp;Cancel
+                  </MDButton>
+                </Box>
+              </Box>
+            </Box>
           </Box>
         </Modal>
       )}
