@@ -10,6 +10,14 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import MDButton from "components/MDButton";
 import { useMaterialUIController } from "context";
+/**
+ * @typedef {object} Product
+ * @property {string} title
+ * @property {number} price
+ * @property {string } description
+ * @property {string } category
+
+ */
 
 ProductTable.propTypes = {
   rows: object,
@@ -25,27 +33,23 @@ function ProductTable({ rows, onDelete, onEdit }) {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead sx={{ display: "table-header-group" }}>
           <TableRow>
-            <TableCell>Paper</TableCell>
-            <TableCell align="right">Plastic</TableCell>
-            <TableCell align="right">Glass</TableCell>
-            <TableCell align="right">Metals</TableCell>
-            <TableCell align="right">Metals</TableCell>
-            <TableCell align="right">Food</TableCell>
+            <TableCell>Title</TableCell>
+            <TableCell align="right">Price</TableCell>
+            <TableCell align="right">Category</TableCell>
+            <TableCell align="center">Description</TableCell>
             <TableCell></TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={row.index}>
+            <TableRow key={row.id}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {row.title}
               </TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.carbs}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
-              <TableCell align="center">{row.food}</TableCell>
+              <TableCell align="center">{row.price}</TableCell>
+              <TableCell align="center">{row.category}</TableCell>
+              <TableCell align="center">{row.description}</TableCell>
               <TableCell align="center">
                 <MDButton
                   variant="text"

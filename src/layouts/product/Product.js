@@ -1,67 +1,51 @@
 import { useState } from "react";
-import { Card, Typography } from "@mui/material";
-import Switch from "@mui/material/Switch";
-import MDBox from "components/MDBox";
+import { Card } from "@mui/material";
 import { Box } from "@mui/material";
-import { PageLayout } from "examples/LayoutContainers/PageLayout";
-import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 
 import * as React from "react";
-import { useForm, Controller, FormProvider } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import Modal from "@mui/material/Modal";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import { mockProduct } from "./mockData";
+
 import Icon from "@mui/material/Icon";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import MDSnackbar from "components/MDSnackbar";
 import { useMaterialUIController } from "context";
-import { makeStyles } from "@mui/styles";
-import MDAlert from "components/MDAlert";
-import { purple, grey, white, indigo } from "@mui/material/colors";
-import Bill from "layouts/billing/components/Bill";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 
-function createData(name, calories, fat, carbs, protein, food) {
-  return { name, calories, fat, carbs, protein, food };
+function createData(title, price, description, category) {
+  return { title, price, description, category };
 }
 import { createTheme, useTheme } from "@mui/material/styles";
 import ProductTable from "./components/ProductTable";
 import ProductForm from "./components/ProductForm";
 
+/**
+ * @typedef {object} Product
+ * @property {string} title
+ * @property {number} price
+ * @property {string } description
+ * @property {string } category
+
+ */
+
 const schema = z.object({
-  name: z
+  title: z
     .string({
-      required_error: "Name is required",
-      invalid_type_error: "Name must be a string",
+      required_error: "title is required",
+      invalid_type_error: "title must be a string",
     })
-    .nonempty("Name is required"),
-  calories: z.number({ invalid_type_error: "Calories must be number" }),
-  carbs: z.number({ invalid_type_error: "Carbs must be Number" }),
-  protein: z.number({ invalid_type_error: "Protien must be Number" }),
-  fat: z.number({ invalid_type_error: "Fat must be Number" }),
-  protein: z.number({ invalid_type_error: "Protien must be Number" }),
-  food: z.number({ invalid_type_error: "Food must be Number" }),
+    .nonempty("Title is required"),
+  price: z.number({ required_error: "Price is Required", invalid_type_error: "Price is Required" }),
+  description: z.string().nonempty("description is required"),
+  category: z.string().nonempty("category is required"),
 });
 
 export default function Product() {
-  const [rows, setRows] = useState([
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 0.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 0.0),
-    createData("Eclair", 262, 16.0, 24, 6.0, 0.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3, 0.0),
-    createData("Gingerbread", 356, 16.0, 49, 3.9, 0.0),
-  ]);
+  const [rows, setRows] = useState(mockProduct);
 
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
@@ -76,12 +60,10 @@ export default function Product() {
 
   const productFormMethods = useForm({
     defaultValues: {
-      name: "",
-      calories: null,
-      carbs: null,
-      fat: null,
-      protein: null,
-      food: null,
+      title: "",
+      price: null,
+      description: "",
+      category: "",
     },
     resolver: zodResolver(schema),
     mode: "onChange",
@@ -98,12 +80,10 @@ export default function Product() {
     setSuccessSB(true);
     setEdit(false);
     reset({
-      name: "",
-      calories: null,
-      carbs: null,
-      fat: null,
-      protein: null,
-      food: null,
+      title: "",
+      price: null,
+      description: "",
+      category: "",
     });
     setMessage("Product Added Successfully");
   };
@@ -152,7 +132,7 @@ export default function Product() {
   };
 
   return (
-    <>
+    <DashboardLayout>
       <Box
         display="flex"
         flexDirection="column"
@@ -160,9 +140,6 @@ export default function Product() {
         justifyContent="center"
         width="100%"
         height="100%"
-        padding="10rem 10rem"
-        margin="3rem 3rem"
-        gap="30rem"
       >
         <Stack gap="5rem">
           <Card>
@@ -304,6 +281,6 @@ export default function Product() {
           </Box>
         </Modal>
       )}
-    </>
+    </DashboardLayout>
   );
 }
