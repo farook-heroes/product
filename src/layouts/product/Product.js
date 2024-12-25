@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Modal from "@mui/material/Modal";
 import Stack from "@mui/material/Stack";
 import { mockProduct } from "./mockData";
+import { useTheme } from "@mui/material";
 
 import Icon from "@mui/material/Icon";
 import MDSnackbar from "components/MDSnackbar";
