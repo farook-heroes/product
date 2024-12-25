@@ -1,7 +1,14 @@
 import React from "react";
 import { Box } from "@mui/material";
+import PropTypes from "prop-types";
+import { useTheme } from "@mui/material";
 
-function ModalWrapper(children) {
+ModalWrapper.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+function ModalWrapper({ children }) {
+  const theme = useTheme();
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       <Box component="div" display="flex" flexDirection="column" p={0} m={0}>
@@ -23,9 +30,5 @@ function ModalWrapper(children) {
     </Box>
   );
 }
-
-ModalWrapper.propTypes = {
-  children,
-};
 
 export default ModalWrapper;
