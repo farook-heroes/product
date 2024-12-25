@@ -102,12 +102,10 @@ export default function Product() {
     if (row) reset({ ...row });
     else
       reset({
-        name: "",
-        calories: null,
-        carbs: null,
-        fat: null,
-        protein: null,
-        food: null,
+        title: "",
+        price: null,
+        description: "",
+        category: "",
       });
   }, [row]);
 
@@ -270,7 +268,6 @@ export default function Product() {
                     color={"error"}
                     onClick={() => {
                       setRow(null);
-                      reset();
                     }}
                   >
                     <Icon>cancel</Icon>&nbsp;Cancel
