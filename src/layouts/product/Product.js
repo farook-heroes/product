@@ -16,10 +16,6 @@ import MDSnackbar from "components/MDSnackbar";
 import { useMaterialUIController } from "context";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 
-function createData(title, price, description, category) {
-  return { title, price, description, category };
-}
-import { createTheme, useTheme } from "@mui/material/styles";
 import ProductTable from "./components/ProductTable";
 import ProductForm from "./components/ProductForm";
 import ModalWrapper from "examples/ModalWrapper";
@@ -198,19 +194,16 @@ export default function Product() {
                   justifyContent="center"
                   alignItems="center"
                   bgcolor={theme.palette.background.default}
-                  content="Add Button"
                 >
-                  <Box>
-                    <MDButton
-                      variant="contained"
-                      color={darkMode ? "white" : "dark"}
-                      onClick={() => {
-                        setEdit(true);
-                      }}
-                    >
-                      <Icon>add</Icon>&nbsp;Add Product
-                    </MDButton>
-                  </Box>
+                  <MDButton
+                    variant="contained"
+                    color={darkMode ? "white" : "dark"}
+                    onClick={() => {
+                      setEdit(true);
+                    }}
+                  >
+                    <Icon>add</Icon>&nbsp;Add Product
+                  </MDButton>
                 </Card>
               )}
             </Box>
