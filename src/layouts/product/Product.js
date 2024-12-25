@@ -9,7 +9,7 @@ import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 
 import * as React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
@@ -29,13 +29,15 @@ import MDSnackbar from "components/MDSnackbar";
 import { useMaterialUIController } from "context";
 import { makeStyles } from "@mui/styles";
 import MDAlert from "components/MDAlert";
-import { purple, grey, white } from "@mui/material/colors";
+import { purple, grey, white, indigo } from "@mui/material/colors";
 import Bill from "layouts/billing/components/Bill";
 
 function createData(name, calories, fat, carbs, protein, food) {
   return { name, calories, fat, carbs, protein, food };
 }
 import { createTheme, useTheme } from "@mui/material/styles";
+import ProductTable from "./components/ProductTable";
+import ProductForm from "./components/ProductForm";
 
 const schema = z.object({
   name: z
@@ -67,31 +69,12 @@ export default function Product() {
   const theme = useTheme();
 
   const [successSB, setSuccessSB] = useState(false);
-  const [infoSB, setInfoSB] = useState(false);
-  const [warningSB, setWarningSB] = useState(false);
-  const [errorSB, setErrorSB] = useState(false);
 
-  const openSuccessSB = () => setSuccessSB(true);
+  const [message, setMessage] = useState("");
+
   const closeSuccessSB = () => setSuccessSB(false);
-  const openInfoSB = () => setInfoSB(true);
-  const closeInfoSB = () => setInfoSB(false);
-  const openWarningSB = () => setWarningSB(true);
-  const closeWarningSB = () => setWarningSB(false);
-  const openErrorSB = () => setErrorSB(true);
-  const closeErrorSB = () => setErrorSB(false);
 
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    reset,
-    getValues,
-    watch,
-    setError,
-    register,
-    clearErrors,
-    formState: { errors, isSubmitted },
-  } = useForm({
+  const productFormMethods = useForm({
     defaultValues: {
       name: "",
       calories: null,
@@ -104,9 +87,16 @@ export default function Product() {
     mode: "onChange",
   });
 
+  const {
+    handleSubmit,
+    reset,
+    formState: { isSubmitted },
+  } = productFormMethods;
+
   const onSubmit = (values) => {
     setRows((prev) => [...prev, { ...values }]);
     setSuccessSB(true);
+    setEdit(false);
     reset({
       name: "",
       calories: null,
@@ -115,16 +105,18 @@ export default function Product() {
       protein: null,
       food: null,
     });
+    setMessage("Product Added Successfully");
   };
 
   const onDelete = (index) => {
     setRows((prev) => prev.filter((_, i) => index != i));
   };
 
-  /* @typdef string*/
   const [row, setRow] = useState();
 
   const [index, setIndex] = useState();
+
+  const [edit, setEdit] = useState(false);
 
   React.useEffect(() => {
     if (row) reset({ ...row });
@@ -145,95 +137,16 @@ export default function Product() {
       return prev;
     });
     setRow(null);
+    setMessage("Product Updated Successfully");
+    setSuccessSB(true);
   };
 
   const formItem = () => {
     return (
       <>
-        <Grid container spacing={2} padding="2rem 2rem">
-          <Grid item xl={4} md={2} xs={2}>
-            <TextField
-              required
-              {...register("name")}
-              key="name"
-              type="text"
-              id="standard-multiline-static"
-              label="Name"
-              error={!!errors?.name}
-              helperText={errors?.name?.message}
-            />
-          </Grid>
-          <Grid item xl={4} md={2} xs={2}>
-            <TextField
-              required
-              {...register("calories", {
-                valueAsNumber: true,
-              })}
-              key="calories"
-              type="text"
-              id="standard-multiline-static"
-              label="Calories"
-              error={!!errors?.calories}
-              helperText={errors?.calories?.message}
-            />
-          </Grid>
-          <Grid item xl={4} md={2} xs={2}>
-            <TextField
-              required
-              {...register("carbs", {
-                valueAsNumber: true,
-              })}
-              key="carbs"
-              type="number"
-              id="standard-multiline-static"
-              label="Carbs"
-              error={!!errors?.carbs}
-              helperText={errors?.carbs?.message}
-            />
-          </Grid>
-          <Grid item xl={4} md={2} xs={2}>
-            <TextField
-              required
-              {...register("fat", {
-                valueAsNumber: true,
-              })}
-              key="fat"
-              type="number"
-              id="standard-multiline-static"
-              label="Fat"
-              error={!!errors?.fat}
-              helperText={errors?.fat?.message}
-            />
-          </Grid>
-          <Grid item xl={4} md={2} xs={2}>
-            <TextField
-              required
-              {...register("protein", {
-                valueAsNumber: true,
-              })}
-              key="protein"
-              type="number"
-              id="standard-multiline-static"
-              label="Protiein"
-              error={!!errors?.protein}
-              helperText={errors?.protein?.message}
-            />
-          </Grid>
-          <Grid item xl={4} md={2} xs={2}>
-            <TextField
-              required
-              {...register("food", {
-                valueAsNumber: true,
-              })}
-              key="food"
-              type="number"
-              id="standard-multiline-static"
-              label="Food"
-              error={!!errors?.food}
-              helperText={errors?.food?.message}
-            />
-          </Grid>
-        </Grid>
+        <FormProvider {...productFormMethods}>
+          <ProductForm />
+        </FormProvider>
       </>
     );
   };
@@ -253,63 +166,16 @@ export default function Product() {
       >
         <Stack gap="5rem">
           <Card>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead sx={{ display: "table-header-group" }}>
-                  <TableRow>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell>MRF</TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell align="right">AD</TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Paper</TableCell>
-                    <TableCell align="right">Plastic</TableCell>
-                    <TableCell align="right">Glass</TableCell>
-                    <TableCell align="right">Metals</TableCell>
-                    <TableCell align="right">Metals</TableCell>
-                    <TableCell align="right">Food</TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row, index) => (
-                    <TableRow key={row.index}>
-                      <TableCell component="th" scope="row">
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="center">{row.calories}</TableCell>
-                      <TableCell align="center">{row.fat}</TableCell>
-                      <TableCell align="center">{row.carbs}</TableCell>
-                      <TableCell align="center">{row.protein}</TableCell>
-                      <TableCell align="center">{row.food}</TableCell>
-                      <TableCell align="center">
-                        <MDButton
-                          variant="text"
-                          color={darkMode ? "white" : "dark"}
-                          onClick={() => {
-                            setRow(row);
-                            setIndex(index);
-                          }}
-                        >
-                          <Icon>edit</Icon>&nbsp;edit
-                        </MDButton>
-                      </TableCell>
-                      <TableCell>
-                        <MDButton variant="text" color="error" onClick={() => onDelete(index)}>
-                          <Icon>delete</Icon>&nbsp;delete
-                        </MDButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <ProductTable
+              rows={rows}
+              onDelete={(index) => {
+                onDelete(index);
+              }}
+              onEdit={(index, row) => {
+                setRow(row);
+                setIndex(index);
+              }}
+            />
           </Card>
           <Stack gap={1.5}>
             <Box
@@ -318,62 +184,69 @@ export default function Product() {
               flexDirection="column"
               justifyContent="center"
               alignItems="center"
-              bgcolor={theme.palette.background.paper}
               p={3}
               mb={2}
               pt={2}
+              bgcolor={edit && !row ? theme.palette.background.paper : undefined}
             >
-              {formItem()}
-              <MDButton
-                variant="contained"
-                color={darkMode ? "white" : "dark"}
-                onClick={() => {
-                  handleSubmit(onSubmit)();
-                }}
-              >
-                <Icon>add</Icon>&nbsp;Add
-              </MDButton>
+              {edit && !row ? (
+                <>
+                  {formItem()}
+                  <Box display="flex" flexDirection="row" alignContent="space-around" gap="2rem">
+                    <MDButton
+                      variant="contained"
+                      color={darkMode ? "white" : "dark"}
+                      onClick={() => {
+                        handleSubmit(onSubmit)();
+                      }}
+                    >
+                      <Icon>add</Icon>&nbsp;Add
+                    </MDButton>
+                    <MDButton
+                      variant="contained"
+                      color={"error"}
+                      onClick={() => {
+                        setEdit(false);
+                        reset();
+                      }}
+                    >
+                      <Icon>cancel</Icon>&nbsp;Cancel
+                    </MDButton>
+                  </Box>
+                </>
+              ) : (
+                <Card
+                  component="div"
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  bgcolor={theme.palette.background.default}
+                  content="Add Button"
+                >
+                  <Box>
+                    <MDButton
+                      variant="contained"
+                      color={darkMode ? "white" : "dark"}
+                      onClick={() => {
+                        setEdit(true);
+                      }}
+                    >
+                      <Icon>add</Icon>&nbsp;Add Product
+                    </MDButton>
+                  </Box>
+                </Card>
+              )}
             </Box>
           </Stack>
-          <Card id="delete-account">
-            <MDBox pt={3} px={2}>
-              <MDTypography variant="h6" fontWeight="medium">
-                Billing Information
-              </MDTypography>
-            </MDBox>
-            <MDBox pt={1} pb={2} px={2}>
-              <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-                <Bill
-                  name="oliver liam"
-                  company="viking burrito"
-                  email="oliver@burrito.com"
-                  vat="FRB1235476"
-                />
-                <Bill
-                  name="lucas harper"
-                  company="stone tech zone"
-                  email="lucas@stone-tech.com"
-                  vat="FRB1235476"
-                />
-                <Bill
-                  name="ethan james"
-                  company="fiber notion"
-                  email="ethan@fiber.com"
-                  vat="FRB1235476"
-                  noGutter
-                />
-              </MDBox>
-            </MDBox>
-          </Card>
         </Stack>
 
         {isSubmitted && (
           <MDSnackbar
             color="success"
             icon="check"
-            title="Product Addition"
-            content="Product Added Successfully"
-            dateTime="11 mins ago"
+            title="Product Status"
+            content={message}
             open={successSB}
             onClose={closeSuccessSB}
             close={closeSuccessSB}
