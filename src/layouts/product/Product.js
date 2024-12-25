@@ -27,7 +27,6 @@ import ModalWrapper from "examples/ModalWrapper";
  * @property {number} price
  * @property {string } description
  * @property {string } category
-
  */
 
 const schema = z.object({
@@ -88,6 +87,8 @@ export default function Product() {
 
   const onDelete = (index) => {
     setRows((prev) => prev.filter((_, i) => index != i));
+    setMessage("Product Deleted Successfully");
+    setSuccessSB(true);
   };
 
   const [row, setRow] = useState();
@@ -211,18 +212,16 @@ export default function Product() {
           </Stack>
         </Stack>
 
-        {isSubmitted && (
-          <MDSnackbar
-            color="success"
-            icon="check"
-            title="Product Status"
-            content={message}
-            open={successSB}
-            onClose={closeSuccessSB}
-            close={closeSuccessSB}
-            bgWhite
-          />
-        )}
+        <MDSnackbar
+          color="success"
+          icon="check"
+          title="Product Status"
+          content={message}
+          open={successSB}
+          onClose={closeSuccessSB}
+          close={closeSuccessSB}
+          bgWhite
+        />
       </Box>
       {row && (
         <Modal
