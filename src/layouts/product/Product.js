@@ -22,6 +22,7 @@ function createData(title, price, description, category) {
 import { createTheme, useTheme } from "@mui/material/styles";
 import ProductTable from "./components/ProductTable";
 import ProductForm from "./components/ProductForm";
+import ModalWrapper from "examples/ModalWrapper";
 
 /**
  * @typedef {object} Product
@@ -238,44 +239,29 @@ export default function Product() {
           aria-labelledby="parent-modal-title"
           aria-describedby="parent-modal-description"
         >
-          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <Box component="div" display="flex" flexDirection="column" p={0} m={0}>
-              <Box
-                component="div"
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                bgcolor={theme.palette.background.paper}
-                p={3}
-                mt="20rem"
-                mb={2}
-                pt={2}
+          <ModalWrapper>
+            {formItem()}
+            <Box display="flex" flexDirection="row" alignContent="space-around" gap="2rem">
+              <MDButton
+                variant="contained"
+                color={darkMode ? "white" : "dark"}
+                onClick={() => {
+                  handleSubmit(onSubmitEdit)();
+                }}
               >
-                {formItem()}
-                <Box display="flex" flexDirection="row" alignContent="space-around" gap="2rem">
-                  <MDButton
-                    variant="contained"
-                    color={darkMode ? "white" : "dark"}
-                    onClick={() => {
-                      handleSubmit(onSubmitEdit)();
-                    }}
-                  >
-                    <Icon>edit</Icon>&nbsp;edit
-                  </MDButton>
-                  <MDButton
-                    variant="contained"
-                    color={"error"}
-                    onClick={() => {
-                      setRow(null);
-                    }}
-                  >
-                    <Icon>cancel</Icon>&nbsp;Cancel
-                  </MDButton>
-                </Box>
-              </Box>
+                <Icon>edit</Icon>&nbsp;edit
+              </MDButton>
+              <MDButton
+                variant="contained"
+                color={"error"}
+                onClick={() => {
+                  setRow(null);
+                }}
+              >
+                <Icon>cancel</Icon>&nbsp;Cancel
+              </MDButton>
             </Box>
-          </Box>
+          </ModalWrapper>
         </Modal>
       )}
     </DashboardLayout>

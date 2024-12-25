@@ -54,7 +54,7 @@ function ProductForm() {
           key="price"
           type="number"
           id="standard-multiline-static"
-          label="price"
+          label="Price"
           error={!!errors?.price}
           helperText={errors?.price?.message}
           fullWidth
@@ -62,7 +62,7 @@ function ProductForm() {
       </Grid>
       <Grid item xl={6} md={2} xs={2}>
         <FormControl variant="standard" sx={{ m: 1, minWidth: 240 }} size="medium">
-          <InputLabel id="demo-simple-select-label">Category</InputLabel>
+          <InputLabel id="demo-simple-select-label">Category*</InputLabel>
           <Select
             {...register("category")}
             key="category"
@@ -73,6 +73,7 @@ function ProductForm() {
             helperText={errors?.category?.message}
             fullWidth
             style={{ height: 30 }}
+            required
           >
             <MenuItem value={"men's clothing"}>Men Clothing</MenuItem>
             <MenuItem value={"women's clothing"}>Women Clothing</MenuItem>
@@ -88,7 +89,7 @@ function ProductForm() {
           key="description"
           type="string"
           id="standard-multiline-static"
-          label="description"
+          label="Description"
           maxRows={4}
           rows={4}
           error={!!errors?.description}
