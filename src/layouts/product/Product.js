@@ -20,6 +20,8 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import ProductTable from "./components/ProductTable";
 import ProductForm from "./components/ProductForm";
 import ModalWrapper from "examples/ModalWrapper";
+import { ModalBody, ModalFooter, ModalHeader } from "react-bootstrap";
+import MDTypography from "components/MDTypography";
 
 /**
  * @typedef {object} Product
@@ -221,6 +223,7 @@ export default function Product() {
           onClose={closeSuccessSB}
           close={closeSuccessSB}
           bgWhite
+          dateTime={new Date().toLocaleString()}
         />
       </Box>
       {row && (
@@ -233,27 +236,34 @@ export default function Product() {
           aria-describedby="parent-modal-description"
         >
           <ModalWrapper>
-            {formItem()}
-            <Box display="flex" flexDirection="row" alignContent="space-around" gap="2rem">
-              <MDButton
-                variant="contained"
-                color={darkMode ? "white" : "dark"}
-                onClick={() => {
-                  handleSubmit(onSubmitEdit)();
-                }}
-              >
-                <Icon>edit</Icon>&nbsp;edit
-              </MDButton>
-              <MDButton
-                variant="contained"
-                color={"error"}
-                onClick={() => {
-                  setRow(null);
-                }}
-              >
-                <Icon>cancel</Icon>&nbsp;Cancel
-              </MDButton>
-            </Box>
+            <ModalHeader id="parent-modal-title">
+              <MDTypography variant="h6" textTransform="capitalize">
+                Update {row.title}
+              </MDTypography>
+            </ModalHeader>
+            <ModalBody id="parent-modal-description">{formItem()}</ModalBody>
+            <ModalFooter>
+              <Box display="flex" flexDirection="row" alignContent="space-around" gap="2rem">
+                <MDButton
+                  variant="contained"
+                  color={darkMode ? "white" : "dark"}
+                  onClick={() => {
+                    handleSubmit(onSubmitEdit)();
+                  }}
+                >
+                  <Icon>edit</Icon>&nbsp;edit
+                </MDButton>
+                <MDButton
+                  variant="contained"
+                  color={"error"}
+                  onClick={() => {
+                    setRow(null);
+                  }}
+                >
+                  <Icon>cancel</Icon>&nbsp;Cancel
+                </MDButton>
+              </Box>
+            </ModalFooter>
           </ModalWrapper>
         </Modal>
       )}

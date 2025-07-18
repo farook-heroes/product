@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes, { object } from "prop-types";
+import { array } from "prop-types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -20,7 +20,7 @@ import { useMaterialUIController } from "context";
  */
 
 ProductTable.propTypes = {
-  rows: object,
+  rows: array,
   onDelete: (_index) => {},
   onEdit: (_index, _row) => {},
 };
@@ -47,10 +47,16 @@ function ProductTable({ rows, onDelete, onEdit }) {
               <TableCell component="th" scope="row">
                 {row.title}
               </TableCell>
-              <TableCell align="center">{row.price}</TableCell>
-              <TableCell align="center">{row.category}</TableCell>
-              <TableCell align="center">{row.description}</TableCell>
-              <TableCell align="center">
+              <TableCell align="center" key={row.id + "price"}>
+                {row.price}
+              </TableCell>
+              <TableCell align="center" key={row.id + "category"}>
+                {row.category}
+              </TableCell>
+              <TableCell align="center" key={row.id + "description"}>
+                {row.description}
+              </TableCell>
+              <TableCell align="center" key={row.id + "edit"}>
                 <MDButton
                   variant="text"
                   color={darkMode ? "white" : "dark"}
@@ -61,7 +67,7 @@ function ProductTable({ rows, onDelete, onEdit }) {
                   <Icon>edit</Icon>&nbsp;edit
                 </MDButton>
               </TableCell>
-              <TableCell>
+              <TableCell key={row.id + "delete"}>
                 <MDButton variant="text" color="error" onClick={() => onDelete(index)}>
                   <Icon>delete</Icon>&nbsp;delete
                 </MDButton>

@@ -16,6 +16,7 @@ Coded by www.creative-tim.com
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "App";
 
 // Material Dashboard 2 React Context Provider
@@ -23,11 +24,25 @@ import { MaterialUIControllerProvider } from "context";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: true,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      cacheTime: 1000 * 60 * 60, // 1 hour
+      gcTime: 1000 * 60 * 60, // 1 hour
+    },
+  },
+});
 
 root.render(
   <BrowserRouter>
-    <MaterialUIControllerProvider>
-      <App />
-    </MaterialUIControllerProvider>
+    <QueryClientProvider client={queryClient}>
+      <MaterialUIControllerProvider>
+        <App />
+      </MaterialUIControllerProvider>
+    </QueryClientProvider>
   </BrowserRouter>
 );
