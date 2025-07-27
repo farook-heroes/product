@@ -31,8 +31,6 @@ import DataTable from "examples/Tables/DataTable";
 // Data
 import data from "./data";
 
-import * as z from "zod";
-
 function ProductSales() {
   const { columns, rows } = data();
   const [menu, setMenu] = useState(null);
