@@ -22,6 +22,7 @@ import ProductForm from "./components/ProductForm";
 import ModalWrapper from "examples/ModalWrapper";
 import { ModalBody, ModalFooter, ModalHeader } from "react-bootstrap";
 import MDTypography from "components/MDTypography";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 /**
  * @typedef {object} Product
@@ -68,11 +69,7 @@ export default function Product() {
     mode: "onChange",
   });
 
-  const {
-    handleSubmit,
-    reset,
-    formState: { isSubmitted },
-  } = productFormMethods;
+  const { handleSubmit, reset } = productFormMethods;
 
   const onSubmit = (values) => {
     setRows((prev) => [...prev, { ...values }]);
@@ -132,6 +129,7 @@ export default function Product() {
 
   return (
     <DashboardLayout>
+      <DashboardNavbar />
       <Box
         display="flex"
         flexDirection="column"

@@ -27,8 +27,7 @@ function ProductForm() {
     watch,
     formState: { errors },
   } = useFormContext();
-  const s = { ...register("price") };
-  console.log(s, "head");
+
   return (
     <Grid container spacing={2} padding="2rem 2rem">
       <Grid item xl={6} md={2} xs={2}>
